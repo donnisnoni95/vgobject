@@ -1,45 +1,45 @@
 module gi
 
 pub struct VFuncInfo {
-	c &GIVFuncInfo
+	c &C.GIVFuncInfo
 }
 
-pub type VFuncInfoFlags int
+pub type VFuncInfoFlags = int
 
 const (
-	VFUNC_MUST_CHAIN_UP		= VFuncInfoFlags(C.GI_VFUNC_MUST_CHAIN_UP)
-	VFUNC_MUST_OVERRIDE		= VFuncInfoFlags(C.GI_VFUNC_MUST_OVERRIDE)
-	VFUNC_MUST_NOT_OVERRIDE	= VFuncInfoFlags(C.GI_VFUNC_MUST_NOT_OVERRIDE)
+	vfunc_must_chain_up		= VFuncInfoFlags(C.GI_VFUNC_MUST_CHAIN_UP)
+	vfunc_must_override		= VFuncInfoFlags(C.GI_VFUNC_MUST_OVERRIDE)
+	vfunc_must_not_override	= VFuncInfoFlags(C.GI_VFUNC_MUST_NOT_OVERRIDE)
 )
 
 pub fn (vfi &VFuncInfo) get_flags() int {
-	return g_vfunc_info_get_flags(vfi.c)
+	return C.g_vfunc_info_get_flags(vfi.c)
 }
 
 pub fn (vfi &VFuncInfo) get_offset() int {
-	return g_vfunc_info_get_offset(vfi.c)
+	return C.g_vfunc_info_get_offset(vfi.c)
 }
 
 pub fn (vfi &VFuncInfo) get_signal() &SignalInfo {
-	cptr := &GIBaseInfo(g_vfunc_info_get_signal(vfi.c))
+	cptr := &C.GIBaseInfo(C.g_vfunc_info_get_signal(vfi.c))
 	if isnil(cptr) { return 0 }
 	ptr := &BaseInfo{cptr}
 	return &SignalInfo(ptr)
 }
 
 pub fn (vfi &VFuncInfo) get_invoker() &FunctionInfo {
-	cptr := &GIBaseInfo(g_vfunc_info_get_invoker(vfi.c))
+	cptr := &C.GIBaseInfo(C.g_vfunc_info_get_invoker(vfi.c))
 	if isnil(cptr) { return 0 }
 	ptr := &BaseInfo{cptr}
 	return &FunctionInfo(ptr)
 }
 
-// gpointer g_vfunc_info_get_address 	(GIVFuncInfo *info,
+// gpointer C.g_vfunc_info_get_address 	(GIVFuncInfo *info,
 //										GType implementor_gtype,
 //                           			GError **error)
 
 
-// gboolean g_vfunc_info_invoke (GIVFuncInfo *info,
+// gboolean C.g_vfunc_info_invoke (GIVFuncInfo *info,
 //                      		GType implementor,
 //                      		const GIArgument *in_args,
 //                      		int n_in_args,
@@ -55,5 +55,5 @@ pub fn (vfi &VFuncInfo) get_cptr() voidptr {
 /* Inherits from BaseInfo */
 
 pub fn (vfi &VFuncInfo) unref() {
-	g_base_info_unref(vfi.c)
+	C.g_base_info_unref(vfi.c)
 }

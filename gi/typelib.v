@@ -1,12 +1,12 @@
 module gi
 
 pub struct Typelib {
-	c &GITypelib
+	c &C.GITypelib
 }
 
 pub fn new_typelib_from_memory(mem byteptr, size u32) ?&Typelib {
-	error := &GError(0)
-	typelib := g_typelib_new_from_memory(&mem, size, &error)
+	error := &C.GError(0)
+	typelib := C.g_typelib_new_from_memory(&mem, size, &error)
 	if typelib == 0 {
 		panic(tos3(error.message))
 	}
@@ -14,36 +14,36 @@ pub fn new_typelib_from_memory(mem byteptr, size u32) ?&Typelib {
 }
 
 // pub fn new_typelib_from_const_memory(mem byteptr, size u32) ?&Typelib {
-// 	error := &GError(0)
-// 	typelib := g_typelib_new_from_const_memory(&mem, size, &error)
+// 	error := &C.GError(0)
+// 	typelib := C.g_typelib_new_from_const_memory(&mem, size, &error)
 // 	if isnil(typelib) {
 // 		panic(tos3(error.message))
 // 	}
 // 	return &Typelib{typelib}
 // }
 
-// GITypelib * g_typelib_new_from_mapped_file (GMappedFile *mfile,
+// GITypelib * C.g_typelib_new_from_mapped_file (GMappedFile *mfile,
 //                                 				GError **error)
 
 pub fn (tl &Typelib) free() {
-	g_typelib_free(tl.c)
+	C.g_typelib_free(tl.c)
 }
 
 pub fn (tl &Typelib) get_symbol(symbol_name string) string {
-	_symbol := voidptr(0)
-	loaded := g_typelib_symbol(tl.c, symbol_name.str, &_symbol)
+	c_symbol := voidptr(0)
+	loaded := C.g_typelib_symbol(tl.c, symbol_name.str, &c_symbol)
 	if !loaded { return '' }
-	symbol := charptr(_symbol)
+	symbol := charptr(c_symbol)
 	return tos3(symbol)
 }
 
 pub fn (tl &Typelib) get_namespace() string {
-	namespace := g_typelib_get_namespace(tl)
+	namespace := C.g_typelib_get_namespace(tl)
 	return tos3(namespace)
 }
 
 /* Inherits from BaseInfo */
 
 pub fn (tl &Typelib) unref() {
-	g_base_info_unref(tl.c)
+	C.g_base_info_unref(tl.c)
 }
