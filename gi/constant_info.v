@@ -1,37 +1,37 @@
 module gi
 
-type u8		C.uint8_t
-type i32	C.int32_t
+// type U8		C.uint8_t
+// type I32	C.int32_t
 
 pub struct ConstantInfo {
-	c &GIConstantInfo
+	c &C.GIConstantInfo
 }
 
 pub fn (ci &ConstantInfo) get_type() &TypeInfo {
-	cptr := &GIBaseInfo(g_constant_info_get_type(ci.c))
+	cptr := &C.GIBaseInfo(C.g_constant_info_get_type(ci.c))
 	ptr := &BaseInfo{cptr}
 	return &TypeInfo(ptr)
 }
 
 pub fn (ci &ConstantInfo) get_value() voidptr {
-	arg := GIArgument(0)
-	g_constant_info_get_value(ci.c, &arg)
+	arg := C.GIArgument{}
+	C.g_constant_info_get_value(ci.c, &arg)
 
 	ti := ci.get_type()
 	tag := ti.get_tag()
 	match tag {
-		TYPE_TAG_BOOLEAN	{ return &bool(&arg) }
-		TYPE_TAG_INT8		{ return &i8(&arg) }
-		TYPE_TAG_UINT8		{ return &u8(&arg) }
-		TYPE_TAG_INT16		{ return &i16(&arg) }
-		TYPE_TAG_UINT16		{ return &u16(&arg) }
-		TYPE_TAG_INT32		{ return &i32(&arg) }
-		TYPE_TAG_UINT32		{ return &u32(&arg) }
-		TYPE_TAG_INT64		{ return &i64(&arg) }
-		TYPE_TAG_UINT64		{ return &u64(&arg) }
-		TYPE_TAG_FLOAT		{ return &f32(&arg) }
-		TYPE_TAG_DOUBLE		{ return &f64(&arg) }
-		TYPE_TAG_UTF8, TYPE_TAG_FILENAME {
+		type_tag_boolean	{ return &bool(&arg) }
+		type_tag_int8		{ return &i8(&arg) }
+		// TYPE_TAG_UINT8		{ return &u8(&arg) }
+		type_tag_int16		{ return &i16(&arg) }
+		type_tag_uint16		{ return &u16(&arg) }
+		// TYPE_TAG_INT32		{ return &i32(&arg) }
+		type_tag_uint32		{ return &u32(&arg) }
+		type_tag_int64		{ return &i64(&arg) }
+		type_tag_uint64		{ return &u64(&arg) }
+		type_tag_float		{ return &f32(&arg) }
+		type_tag_double		{ return &f64(&arg) }
+		type_tag_utf8, type_tag_filename {
 			return &charptr(&arg)
 		}
 		else {
@@ -49,5 +49,5 @@ pub fn (ci &ConstantInfo) get_cptr() voidptr {
 /* Inherits from BaseInfo */
 
 pub fn (ci &ConstantInfo) unref() {
-	g_base_info_unref(ci.c)
+	C.g_base_info_unref(ci.c)
 }
